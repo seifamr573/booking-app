@@ -1,3 +1,8 @@
-export function BookingPage(){
-    return( <div>my booking</div>)
+import { useEffect, useState } from "react"
+import { useParams } from "react-router-dom"
+
+export default function BookingPage() {
+    const{id}=useParams
+   
+    return (<div>single booking {id}</div>)
 }

@@ -11,6 +11,15 @@ const jwt = require("jsonwebtoken")
 const Booking = require("./models/bookings")
 const salt = bycrpt.genSaltSync(10);
 const jwtSecret = "hghlgfmh;fmhfmh;dfa;ld;la;z"
+function getUserDataFromReq(req) {
+    return new Promise((resolve, reject) => {
+      jwt.verify(req.cookies.token, jwtSecret, {}, async (err, userData) => {
+        if (err) throw err;
+        resolve(userData);
+      });
+    });
+  }
+  
 
 m_url = "mongodb+srv://seifeldeenamr:NJksj9sG6fjiJBwN@bookingapp.lba7cif.mongodb.net/?retryWrites=true&w=majority&appName=bookingApp"
 
@@ -207,24 +216,28 @@ app.get("/profile", (req, res) => {
     //res.json({token})
 })
 
-app.post("/booking", (req, res) => {
-    const { place, checkIn,name,
+app.post("/booking",async (req, res) => {
+    const userData=await getUserDataFromReq(req)
+    const { place, checkIn, name,
+        
         checkOut, number
         , phone, price } = req.body
- Booking.create({
-        place, checkIn,name,
+   const doc= await Booking.create({
+        place, checkIn, name,
         checkOut, number
-        , phone, price
-
-    }).then((err,doc)=>{
-        res.json(doc)
-    }).catch((err)=>{
-        throw err
+        , phone, price, user:userData.id,
 
     })
-    
-})
+    res.json(doc)
 
+
+})
+app.get("/bookings", async (req,res) => {
+    
+  
+    const userData = await getUserDataFromReq(req);
+    res.json( await Booking.find({user:userData.id}).populate('place') );
+  });
 
 
 app.listen(3000, () => { console.log("working") });

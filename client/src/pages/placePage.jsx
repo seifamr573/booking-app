@@ -16,14 +16,10 @@ export default function PlacePage() {
     const [number, setNumber] = useState(0)
    
 
-if(redirect){
-    return (<Navigate to ={redirect} ></Navigate>)
-}
+
     const { id } = useParams()
-    if (checkIn && checkOut) {
-        days = differenceInDays(new Date(checkOut), new Date(checkIn))
-    }
-    console.log(id)
+   
+
     const [place, setPlace] = useState(null)
     useEffect(() => {
         if (!id) {
@@ -34,6 +30,12 @@ if(redirect){
         })
 
     }, [id])
+    if (checkIn && checkOut) {
+        days = differenceInDays(new Date(checkOut), new Date(checkIn))
+    }
+    if(redirect){
+        return (<Navigate to ={redirect} ></Navigate>)
+    }
     async function reservation(){
         const data={
     
@@ -43,8 +45,8 @@ if(redirect){
             price: days*place.price 
         }
        const response= await axios.post("/booking",data)
-        const bID=response.data.place_id
-        setRedirect('/acount/booking/'+bID)
+        const bID=response.data._id
+        setRedirect('/Account/bookings/'+bID)
     
     }
     if (place == null)
